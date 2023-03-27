@@ -1,0 +1,70 @@
+[
+    {
+        "self": "http://54.215.87.148:8080/rest/api/2/user?username=admin",
+        "key": "JIRAUSER10000",
+        "name": "admin",
+        "emailAddress": "support@klera.io",
+        "avatarUrls": {
+            "48x48": "http://54.215.87.148:8080/secure/useravatar?avatarId=10341",
+            "24x24": "http://54.215.87.148:8080/secure/useravatar?size=small&avatarId=10341",
+            "16x16": "http://54.215.87.148:8080/secure/useravatar?size=xsmall&avatarId=10341",
+            "32x32": "http://54.215.87.148:8080/secure/useravatar?size=medium&avatarId=10341"
+        },
+        "displayName": "Klera Services",
+        "active": true,
+        "deleted": false,
+        "timeZone": "UTC",
+        "locale": "en_US"
+    },
+    {
+        "self": "http://54.215.87.148:8080/rest/api/2/user?username=alice",
+        "key": "JIRAUSER10100",
+        "name": "alice",
+        "emailAddress": "noreplay@example.com",
+        "avatarUrls": {
+            "48x48": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=48",
+            "24x24": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=24",
+            "16x16": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=16",
+            "32x32": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=32"
+        },
+        "displayName": "Alice Foo",
+        "active": true,
+        "deleted": false,
+        "timeZone": "UTC",
+        "locale": "en_US"
+    },
+    {
+        "self": "http://54.215.87.148:8080/rest/api/2/user?username=asragab",
+        "key": "JIRAUSER10105",
+        "name": "asragab",
+        "emailAddress": "noreplay@example.com",
+        "avatarUrls": {
+            "48x48": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=48",
+            "24x24": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=24",
+            "16x16": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=16",
+            "32x32": "https://www.gravatar.com/avatar/c567e3a76e53c7bd7d2dda08af2122e3?d=mm&s=32"
+        },
+        "displayName": "ASRagab",
+        "active": true,
+        "deleted": false,
+        "timeZone": "UTC",
+        "locale": "en_US"
+    },
+    {
+        "self": "http://54.215.87.148:8080/rest/api/2/user?username=Kurt+Angle",
+        "key": "JIRAUSER10102",
+        "name": "Kurt Angle",
+        "emailAddress": "Dave.Chris@gmail.com",
+        "avatarUrls": {
+            "48x48": "https://www.gravatar.com/avatar/64bd7a76c7eebd6b007262a0579b4985?d=mm&s=48",
+            "24x24": "https://www.gravatar.com/avatar/64bd7a76c7eebd6b007262a0579b4985?d=mm&s=24",
+            "16x16": "https://www.gravatar.com/avatar/64bd7a76c7eebd6b007262a0579b4985?d=mm&s=16",
+            "32x32": "https://www.gravatar.com/avatar/64bd7a76c7eebd6b007262a0579b4985?d=mm&s=32"
+        },
+        "displayName": "Davechris",
+        "active": true,
+        "deleted": false,
+        "timeZone": "UTC",
+        "locale": "en_US"
+    }
+]

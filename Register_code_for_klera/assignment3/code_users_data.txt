@@ -1,0 +1,26 @@
+import string
+import requests
+import json
+import pandas as pd
+
+
+username = "admin"
+password = "Ctadmin@123"
+url="http://54.215.87.148:8080/rest/api/2/user/search?username="
+letters=[]
+name_list=[]
+print("Alphabet from a-z:")
+for letter in string.ascii_lowercase:
+   letters.append(letter)
+
+for letter in letters:
+   response_API = requests.get(url+letter,auth=(username,password))
+   data1=response_API.text
+   parse_json = json.loads(data1)
+   a=len(parse_json)
+   for i in range(a):
+    b=parse_json[i]['name']
+    name_list.append(b)
+my_set=set(name_list)
+df=pd.DataFrame(my_set)
+df.to_csv('Users_data.csv')

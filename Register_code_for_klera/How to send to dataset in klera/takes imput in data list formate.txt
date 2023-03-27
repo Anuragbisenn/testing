@@ -1,0 +1,39 @@
+# Output Meta Details
+klera_meta_out = {
+    "CodeBuild Build Details": {
+        "DSTID": "CodeBuild Build Details_1.0.0",
+        "id": {
+            "isrowid": True,
+            "isvisible": True,
+            "datatype": "STRING"
+        }
+    }
+}
+
+# Required Input Details
+klera_in_details = {
+    "Client_ID": {
+        "datatype": ["STRING"],
+        "argtype": "Data",
+        "required": True,
+        "multiplerows":True
+    },
+    "Client_Secret": {
+        "datatype": ["STRING"],
+        "argtype": "Data",
+        "required": True,
+        "multiplerows":True
+    },
+    "AWS_Region": {
+        "datatype": ["STRING"],
+        "argtype": "Data",
+        "required": True,
+        "multiplerows":True
+    },
+    "Build_Ids": {
+        "datatype": ["STRING"],
+        "argtype": "Data",
+        "required": True,
+        "multiplerows":True
+    }
+}

@@ -1,0 +1,362 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jul 19 12:35:40 2019
+
+@author: J.Preetham
+"""
+
+import pandas as pd
+from fbprophet import Prophet
+import datetime as datetime
+
+#inp_df = pd.read_csv('D:/JPR/ForeCast/FaceBookProphet/prophet-master/prophet-master/examples/example_wp_log_peyton_manning.csv')
+#inp_df.head()
+#
+#Date_column = inp_df['ds'].tolist()
+#ForecastColumn = inp_df['y'].tolist()
+#Steps = 365
+
+klera_in = ["Date_column", "ForecastColumn", "Steps"]
+
+klera_in_details = {
+                    "Date_column":
+                            {
+                             "description":"Date", 
+                             "datatype":["DATE","DATETIME","TIME"],
+                             "argtype":"Data",
+                             "multivalued":False,
+                             "multicolumn":False
+                            },
+                    "ForecastColumn":
+                            {
+                             "description":"Forecast Column",
+                             "datatype":["INT","LONG","NUMERIC"],
+                             "argtype":"Data",
+                             "multivalued":False,
+                             "multicolumn":True
+                            },
+                    "Steps":
+                            {
+                             "description":"Steps Count",
+                             "datatype":["INT","LONG"],
+                             "argtype":"Param",
+                             "multivalued":False,
+                             "multicolumn":False,
+
+                             "min":3,
+                             "max":100,
+
+                             "default":4
+                            }
+                    }
+
+# ###### ------------- Save Inputs to Local File -------- ########
+# import shelve
+# filename = 'E://globalsave10.pkl'
+# my_shelf = shelve.open(filename,'n') # 'n' for new
+
+# temp_list = klera_in
+# temp_list.append("klera_meta_in")
+
+# for key in temp_list:
+   # try:
+       # my_shelf[key] = globals()[key]
+   # except TypeError:
+       # #
+       # # __builtins__, my_shelf, and imported modules can not be shelved.
+       # #
+       # print('ERROR shelving: {0}'.format(key))
+# my_shelf.close()
+
+
+
+# ####### ------------- Read Inputs from Local File -------- ########
+# import shelve
+# filename = 'E://globalsave10.pkl'
+# my_shelf = shelve.open(filename)
+# for key in my_shelf:
+    # globals()[key]=my_shelf[key]
+# my_shelf.close()
+
+
+
+
+
+#import numpy as np                             # vectors and matrices
+#import pandas as pd                             # tables and data manipulations
+
+#from enum import Enum, unique
+#@unique
+#class Periodicity(Enum):
+#    UNKNOWN = 0
+#    HOURLY = 1
+#    DAILY = 2
+#    WEEKLY = 3
+#    MONTHLY = 4
+#    QUARTERLY = 5
+#    YEARLY = 6;
+
+
+
+  
+    
+def determinePeriodicity(data, userHint):
+    fiveMins = 300000
+    oneHour = 3600000
+    oneDay = oneHour * 24
+    oneWeek = oneDay * 7
+    thirtyDays = oneHour * 24 * 30
+    approxQuarter = thirtyDays * 3
+    oneYear = oneDay * 365
+
+    Periodicity_UNKNOWN = 0
+    Periodicity_HOURLY = 1
+    Periodicity_DAILY = 2
+    Periodicity_WEEKLY = 3
+    Periodicity_MONTHLY = 4
+    Periodicity_QUARTERLY = 5
+    Periodicity_YEARLY = 6; 
+
+
+    finalDeltaTime = 0
+    finalPeriodicity = Periodicity_UNKNOWN
+    initialTS = 0
+    finalTS = 0
+    
+
+    
+    finalPeriodicity  = Periodicity_UNKNOWN
+    
+    initialTS = data.index[0]
+    finalTS = data.index[len(data)-1]
+    
+    if userHint != Periodicity_UNKNOWN:
+#            print('User Hint = ' + userHint.name)
+        finalPeriodicity = userHint
+        if userHint == Periodicity_HOURLY:
+            finalDeltaTime = oneHour
+        elif userHint == Periodicity_DAILY:
+            finalDeltaTime = oneDay
+        elif userHint == Periodicity_WEEKLY:
+            finalDeltaTime = oneWeek
+        elif userHint == Periodicity_MONTHLY:
+            finalDeltaTime = thirtyDays
+        elif userHint == Periodicity_QUARTERLY:
+            finalDeltaTime = approxQuarter
+        elif userHint == Periodicity_YEARLY:
+            finalDeltaTime = oneYear
+        
+    elif userHint == Periodicity_UNKNOWN:
+     
+        deltaSum = 0
+        totalDeltas = 0
+        
+        for i in range(1,len(data)-1):
+            deltaTime = (data.index[i] - data.index[i-1])
+            deltaSum += (deltaTime.total_seconds() * 1000)
+            totalDeltas += 1 
+        
+        averageDelta = deltaSum / totalDeltas
+        print (averageDelta,deltaSum, totalDeltas )
+        
+        # allow +-5mins for hourly
+        if (abs(oneHour -  averageDelta) <= fiveMins):
+            finalPeriodicity = Periodicity_HOURLY
+            finalDeltaTime = oneHour
+        # allow += 1 hour for daily
+        elif (abs(oneDay - averageDelta) <= oneHour):
+            finalPeriodicity = Periodicity_DAILY
+            finalDeltaTime = oneDay            
+        #allow +- 6 hours for weekly
+        elif (abs(oneWeek - averageDelta) <= (oneDay / 4.0)):
+            finalPeriodicity = Periodicity_WEEKLY
+            finalDeltaTime = oneWeek
+        #allow +- 3 days for monthly
+        elif (abs(thirtyDays - averageDelta) <= (oneDay * 3.0)):
+            finalPeriodicity = Periodicity_MONTHLY
+            finalDeltaTime = thirtyDays
+        # allow +- 1 week for quarterly
+        elif (abs(approxQuarter - averageDelta) <= oneWeek):
+            finalPeriodicity = Periodicity_QUARTERLY
+            finalDeltaTime = approxQuarter
+        # allow +- 2 days for yearly
+        elif (abs(oneYear - averageDelta) <= (oneDay * 2.0)):
+            finalPeriodicity = Periodicity_YEARLY
+            finalDeltaTime = oneYear
+        else: 
+            finalPeriodicity = Periodicity_UNKNOWN
+            finalDeltaTime = averageDelta
+            
+#        print('Detected Periodicity  = ' + self.finalPeriodicity.name)
+    return [finalPeriodicity,finalDeltaTime]
+
+
+
+
+
+
+
+
+
+
+### Convert Date Time column received in Epoch Micro seconds to Readable String
+fmt = "%Y-%m-%d %H:%M:%S"
+datetime_str = []
+for datetime_epch in Date_column:
+    if datetime_epch >= 0 :
+        temp = datetime.datetime.fromtimestamp(float(datetime_epch)/1000., tz=None)
+    else :
+        temp = datetime.datetime(1970, 1, 1) + datetime.timedelta(seconds=(datetime_epch/1000))
+#    datetime_str.append(temp.strftime(fmt))
+    datetime_str.append(temp)
+
+
+### Prohet expects the column names to be [ds,y]
+df = pd.DataFrame(ForecastColumn)
+num_cols = df.shape[1]
+#rng = range(1, num_cols+1)
+#new_cols = ['y' + str(i) for i in rng]
+new_cols = []
+for col in range(0,num_cols):
+    new_cols.append(klera_meta_in["ForecastColumn"][col]["name"])
+df.columns = new_cols[:num_cols]
+df['ds'] = datetime_str
+df = df.sort_values(['ds'], ascending=True)
+df = df.reset_index()
+
+
+## ----------- Detect Periodicity ---------------------
+Periodicity_UNKNOWN = 0
+Periodicity_HOURLY = 1
+Periodicity_DAILY = 2
+Periodicity_WEEKLY = 3
+Periodicity_MONTHLY = 4
+Periodicity_QUARTERLY = 5
+Periodicity_YEARLY = 6;
+
+periodicityHint =  Periodicity_UNKNOWN
+
+[period, deltaTime] = determinePeriodicity(df[['ds']].set_index('ds'), periodicityHint)
+
+periodicity_names = ["UNKNOWN", "HOURLY","DAILY", "WEEKLY","MONTHLY", "QUARTERLY", "YEARLY"]
+print('Periodicity : User Hint = ' + periodicity_names[periodicityHint] + ' Detected  = ' + periodicity_names[period])
+
+
+## Compute Delta Time
+freq = 'd'
+if period == Periodicity_HOURLY:
+    freq = 'h'
+elif period == Periodicity_DAILY:
+    freq = 'd'
+elif period == Periodicity_WEEKLY:
+    freq = '7d'
+elif period == Periodicity_MONTHLY:
+    freq = 'm'
+elif period == Periodicity_QUARTERLY:
+    freq = '3m'
+elif period == Periodicity_YEARLY:
+    freq = 'y'
+
+
+
+### Forecast model and forecast
+#final_out = pd.DataFrame()  
+
+inp_col = new_cols[0]
+inp_df = df[['ds', inp_col]]
+inp_df.columns = ['ds','y']
+   
+m = Prophet()
+m.fit(inp_df)
+
+#Steps = int(Steps)
+
+
+future = m.make_future_dataframe(periods=Steps, freq=freq)
+forecast = m.predict(future)
+out = forecast[['ds', 'yhat']]
+out.columns =  ['ds']+[inp_col + ".hat"]
+
+final_out = pd.concat([out, df[[inp_col]]], join='outer',  axis=1)
+
+
+
+
+  
+for inp_col in new_cols[1:num_cols] :
+    print("Forecasting ",inp_col)
+    inp_df = df[['ds',inp_col]]
+    
+    inp_df.columns = ['ds','y']
+   
+    m = Prophet()
+    m.fit(inp_df)
+
+    future = m.make_future_dataframe(periods=Steps, freq=freq)
+    forecast = m.predict(future)
+
+    #if __debug__:
+    #    forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]    
+    #    fig1 = m.plot(forecast)
+    
+    #out = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    
+    #=============================================================================
+    #out = forecast[['ds', 'yhat']].tail(n=Steps)
+    #out= out.rename(columns={"yhat": "y"})
+        
+    #df['Label']="Actual"
+    #out['Label']="Predicted"
+    #final_out = pd.concat([df,out])
+    #=============================================================================
+        
+    #==============================================================================
+    ####For Outputting Orignial and Predicted values in Seperate columns    
+    out = forecast[['ds', 'yhat']]
+    out.columns =  ['ds']+[inp_col + ".hat"]
+   
+    out = pd.concat([out, df[[inp_col]]], join='outer',  axis=1)
+    final_out =pd.merge(final_out, out, on='ds', how='outer')
+#final_out.fillna(0.0,inplace=True)
+    
+if (klera_meta_in["Date_column"][0]["dataType"] == 'DATE'):
+    final_out['ds'] = pd.to_datetime(final_out['ds'], format="%Y-%m-%d").dt.date
+elif (klera_meta_in["Date_column"][0]["dataType"] == 'TIME'): 
+    final_out['ds'] = pd.to_datetime(final_out['ds'], format="%H:%M:%S").dt.time
+else: 
+    final_out['ds'] = pd.to_datetime(final_out['ds'], format="%Y-%m-%d %H:%M:%S")    
+   
+final_out.rename(columns={'ds':klera_meta_in["Date_column"][0]["name"]}, inplace=True) 
+    
+    
+#==============================================================================
+
+#==============================================================================
+#import shelve
+#filename = 'D://finalout.pkl'
+#my_shelf = shelve.open(filename,'n') # 'n' for new
+#
+#for key in ["final_out"]:
+#    try:
+#        my_shelf[key] = globals()[key]
+#    except TypeError:
+#        #
+#        # __builtins__, my_shelf, and imported modules can not be shelved.
+#        #
+#        print('ERROR shelving: {0}'.format(key))
+#my_shelf.close()
+##=====================================
+#import shelve
+#filename = 'D://finalout.pkl'
+#my_shelf = shelve.open(filename)
+#for key in my_shelf:
+#    globals()[key]=my_shelf[key]
+#my_shelf.close()
+#==============================================================================
+
+
+
+#out_dict = {'Predicted': pd.DataFrame(data={'Predicted Class': out_label})}
+out_dict = {'ForeCast': final_out}
+klera_dst = [out_dict]
+

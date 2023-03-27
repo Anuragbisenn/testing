@@ -1,0 +1,6 @@
+
+instance_url= http://54.215.87.148:8080
+
+user_name= admin
+
+password= Ctadmin@123

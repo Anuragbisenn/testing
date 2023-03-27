@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "..\\1507-check box"
+		},
+		{
+			"path": "..\\two same dataset using reuse replace mode"
+		},
+		{
+			"path": "..\\..\\Users\\anurag.bisen\\Desktop\\python check"
+		}
+	],
+	"settings": {},
+	"extensions": {
+		"recommendations": [
+			"pancho111203.vscode-ipython"
+		]
+	}
+}

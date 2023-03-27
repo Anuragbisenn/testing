@@ -1,0 +1,57 @@
+import string
+import requests
+import json
+import pandas as pd
+
+
+username = "admin"
+password = "Ctadmin@123"
+url="http://54.215.87.148:8080/rest/api/2/user/search?username="
+letters=[]
+name_list=[]
+self_list=[]
+key_list=[]
+email_list=[]
+Displayname_list=[]
+Active_list=[]
+del_list=[]
+Timezone_list=[]
+locel_list=[]
+
+for letter in string.ascii_lowercase:
+   letters.append(letter)
+
+
+for letter in letters:
+   response_API = requests.get(url+letter,auth=(username,password))
+   data1=response_API.text
+   parse_json = json.loads(data1)
+   a=len(parse_json)
+   for i in range(a):
+
+    b=parse_json[i]['name']
+    if b not in name_list:
+      name_list.append(b)
+
+      c=parse_json[i]['emailAddress']
+      email_list.append(c)
+
+      d=parse_json[i]['key']
+      key_list.append(d)
+    
+      e=parse_json[i]['displayName']
+      Displayname_list.append(e)
+    
+
+
+df=pd.DataFrame({
+  'name':name_list,
+  'email':email_list,
+  'key':key_list,
+  'disp':Displayname_list
+
+})
+
+df.to_csv('Users_data11.csv')
+
+print("Done...")
